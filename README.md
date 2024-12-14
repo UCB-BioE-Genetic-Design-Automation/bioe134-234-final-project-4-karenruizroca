@@ -14,51 +14,51 @@ These functions are implemented in **Python** and are part of the broader bioinf
 
 ## Scope of Work
 
-As part of the final project for BioE 134, I developed two functions that are foundational for sequence analysis:
+As part of the final project for BioE 134, I developed two functions that are foundational for CRISPR knock out in cyanobacteria:
 
-1. **Reverse Complement**: This function returns the reverse complement of a DNA sequence, which is an essential task in many genetic analysis pipelines.
+1. **Find PAM Sequence**: This function returns the index of the DNA sequence's PAM index, which is  essential for the creation of a CRISPR construct.
    
-2. **Translate**: This function translates a DNA sequence into a corresponding protein sequence by converting each codon into its corresponding amino acid, based on the standard genetic code.
+2. **Design gRNA**: This function uses the Find PAM function in order to find the target DNA's sequence that will guide the CAS12.
 
-Both functions include input validation and error handling to ensure proper use. The reverse complement function raises an error for sequences containing invalid characters, while the translate function raises an error for sequences not divisible by three, as well as sequences containing invalid characters.
+Both functions include input validation and error handling to ensure proper use. The Find PAM sequence raises an error if no PAM sequence is found, while the design gRNA function raises an error for genes not found in the genomic data of organism provided.
 
 ---
 
 ## Function Descriptions
 
-### 1. Reverse Complement (`reverse_complement`)
+### 1. Find PAM Sequence (`find_pam`)
 
-- **Description**: This function takes a DNA sequence and returns its reverse complement. Only valid nucleotides (A, T, C, G) are allowed. The function raises a `ValueError` if invalid characters are found.
-- **Input**: A string representing the DNA sequence.
-- **Output**: A string representing the reverse complement of the input DNA sequence.
+- **Description**: This function takes an organism name and desired gene to edit and returns index of PAM sequence near the gene of interest. The function raises a `ValueError` if no PAM sequences are found. Must check which CRISPR toolkit it may use to look for appropriate PAM sequence. 
+- **Inputs**: A string representing the name of the organism. A string including the name of the gene of interest. 
+- **Output**: An integer for the index of the PAM sequence near the gene. 
 
 **Example**:
 ```python
-reverse_complement("ATGC")
-# Returns: "GCAT"
+pam_sequence("cyanobacteria","geneA")
+# Returns: "34"
 ```
 
-### 2. Translate (`translate`)
+### 2. Design Guide RNA  (`design_grna`)
 
-- **Description**: This function translates a DNA sequence into a corresponding protein sequence. The input sequence must be divisible by 3. If it contains invalid characters or is not a multiple of three, the function raises a `ValueError`. Stop codons are represented as underscores (`_`).
+- **Description**: This function helps build a base pair sequence complementary to the target DNA upstream of the PAM sequence of specified organism and near the gene of interest.
 - **Input**: A string representing the DNA sequence.
 - **Output**: A string representing the translated protein sequence.
 
 **Example**:
 ```python
-translate("ATGGCC")
-# Returns: "MA"
+design_grna("cyanobacteria", "geneB")
+# Returns: "ACTGTTGGATCGATAAGTC"
 ```
 
 ---
 
 ## Error Handling
 
-### Reverse Complement
-- Raises `ValueError` if invalid characters (anything other than A, T, C, G) are present in the DNA sequence.
+### Find PAM Sequence
+- Raises `ValueError` if no PAM sequence is found for inputted gene
 
-### Translate
-- Raises `ValueError` if the sequence contains invalid characters or if the sequence length is not a multiple of three.
+### Design Guide RNA
+- Raises `ValueError` if there are not enough base pairs upstream of the PAM sequence
 
 ---
 
@@ -106,4 +106,4 @@ print(translate("ATGGCC"))
 
 ## Conclusion
 
-These two functions provide foundational operations for working with DNA sequences in bioinformatics pipelines. They have been tested and documented, ensuring proper error handling and robust functionality.
+These two functions provide foundational operations for working with the Cyanobacteria animal kingdrom in bioinformatics pipelines. They have been tested and documented, ensuring proper error handling and robust functionality.

@@ -18,48 +18,36 @@ def reverse_complement(sequence):
     complement = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}
     return ''.join(complement[base] for base in reversed(sequence))
 
-def translate(sequence):
-    """
-    Translates a DNA sequence into a protein sequence based on the standard genetic code.
+def find_pam(genome_data, organism_name, gene_name, pam_sequence="TTTV"):
+    # Locate the gene in the genome file
+    genome = genome_data[organism_name]["genome"]
+    gene_info = genome_data[organism_name]["genes"].get(gene_name)
+    
+    if not gene_info:
+        raise ValueError(f"Gene {gene_name} not found in {organism_name}.")
 
-    Args:
-        sequence (str): A string representing the DNA sequence.
+    start, end = gene_info["start"], gene_info["end"]
+    target_region = genome[start-50:end+50]  # Search 50 bp upstream and downstream
 
-    Returns:
-        str: The corresponding protein sequence.
+    # Search for the PAM sequence
+    for i in range(len(target_region) - len(pam_sequence)):
+        if target_region[i:i + len(pam_sequence)] == pam_sequence:
+            return start - 50 + i  # Return PAM index in the full genome
 
-    Raises:
-        ValueError: If the DNA sequence contains invalid characters or is not a multiple of three.
-    """
-    valid_nucleotides = {'A', 'T', 'C', 'G'}
-    if any(char not in valid_nucleotides for char in sequence):
-        raise ValueError("DNA sequence contains invalid characters. Allowed characters: A, T, C, G.")
-    if len(sequence) % 3 != 0:
-        raise ValueError("Length of DNA sequence is not a multiple of three, which is required for translation.")
+    raise ValueError(f"No PAM sequence {pam_sequence} found near {gene_name}.")
 
-    codon_table = {
-        'ATA':'I', 'ATC':'I', 'ATT':'I', 'ATG':'M',
-        'ACA':'T', 'ACC':'T', 'ACG':'T', 'ACT':'T',
-        'AAC':'N', 'AAT':'N', 'AAA':'K', 'AAG':'K',
-        'AGC':'S', 'AGT':'S', 'AGA':'R', 'AGG':'R',
-        'CTA':'L', 'CTC':'L', 'CTG':'L', 'CTT':'L',
-        'CCA':'P', 'CCC':'P', 'CCG':'P', 'CCT':'P',
-        'CAC':'H', 'CAT':'H', 'CAA':'Q', 'CAG':'Q',
-        'CGA':'R', 'CGC':'R', 'CGG':'R', 'CGT':'R',
-        'GTA':'V', 'GTC':'V', 'GTG':'V', 'GTT':'V',
-        'GCA':'A', 'GCC':'A', 'GCG':'A', 'GCT':'A',
-        'GAC':'D', 'GAT':'D', 'GAA':'E', 'GAG':'E',
-        'GGA':'G', 'GGC':'G', 'GGG':'G', 'GGT':'G',
-        'TCA':'S', 'TCC':'S', 'TCG':'S', 'TCT':'S',
-        'TTC':'F', 'TTT':'F', 'TTA':'L', 'TTG':'L',
-        'TAC':'Y', 'TAT':'Y', 'TAA':'_', 'TAG':'_',
-        'TGC':'C', 'TGT':'C', 'TGA':'_', 'TGG':'W',
-    }
-    protein = ""
-    for i in range(0, len(sequence), 3):
-        codon = sequence[i:i+3]
-        protein += codon_table.get(codon, '_')  # Using '_' for unknown or stop codons
-    return protein
+def design_grna(genome_data, organism_name, gene_name, pam_sequence="TTTV", grna_length=20):
+    # Find the PAM index
+    pam_index = find_pam(genome_data, organism_name, gene_name, pam_sequence)
+
+    # Extract the 20 bp sequence upstream of the PAM
+    genome = genome_data[organism_name]["genome"]
+    grna_target = genome[pam_index - grna_length:pam_index]
+
+    # Generate the complementary gRNA sequence
+    grna_complementary = reverse_complement(grna_target)
+
+    return grna_complementary
 
 if __name__ == "__main__":
     # Example DNA sequence for demonstration
