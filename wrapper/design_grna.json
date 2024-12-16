@@ -1,0 +1,55 @@
+{
+    "id": "org.c9.function.bioe_134.DNA.design_grna",
+    "name": "Design gRNA",
+    "description": "Designs a guide RNA (gRNA) sequence for a specified gene in the genome of an organism. The function identifies the PAM sequence and extracts the 20 bp region upstream of it, returning the reverse complement as the gRNA sequence.",
+    "type": "function",
+    "keywords": ["genetics", "DNA", "gRNA", "CRISPR", "bioinformatics"],
+    "inputs": [
+        {
+            "name": "organism_name",
+            "type": "string",
+            "description": "The name of the organism (e.g., Synechococcus elongatus UTEX 2973)."
+        },
+        {
+            "name": "gene_name",
+            "type": "string",
+            "description": "The name of the gene for which the gRNA is being designed (e.g., nblA)."
+        }
+    ],
+    "outputs": [
+        {
+            "type": "string",
+            "description": "The designed guide RNA sequence (20 bp reverse complement of the region upstream of the PAM)."
+        }
+    ],
+    "examples": [
+        {
+            "input": {
+                "organism_name": "Synechococcus elongatus UTEX 2973",
+                "gene_name": "nblA"
+            },
+            "output": {
+                "result": "AGACTCAAGCTTNGACTAGC"
+            }
+        },
+        {
+            "input": {
+                "organism_name": "Synechococcus elongatus PCC 7942",
+                "gene_name": "glgC"
+            },
+            "output": {
+                "result": "CCGCTTAGGTTGCGCTAGCT"
+            }
+        }
+    ],
+    "execution_details": {
+        "language": "Python",
+        "source": "bio_functions.py",
+        "execution": "design_grna"
+    },
+    "notes": [
+        "This function uses a fixed gRNA length of 20 bp, as per standard CRISPR conventions.",
+        "The PAM sequence is determined dynamically based on the organism's CRISPR toolkit information.",
+        "The genome and gene data are stored in a globally loaded JSON file."
+    ]
+}

@@ -1,0 +1,51 @@
+{
+    "id": "org.c9.function.bioe_134.DNA.find_pam",
+    "name": "Find PAM Sequence",
+    "description": "Locates the PAM sequence for the CRISPR system of a specified organism near a target gene, using the toolkit to determine the required PAM sequence and genome data.",
+    "type": "function",
+    "keywords": ["genetics", "DNA", "PAM", "CRISPR", "bioinformatics"],
+    "inputs": [
+        {
+            "name": "organism_name",
+            "type": "string",
+            "description": "The name of the organism (e.g., Synechococcus elongatus UTEX 2973)."
+        },
+        {
+            "name": "gene_name",
+            "type": "string",
+            "description": "The name of the gene near which to search for the PAM sequence (e.g., nblA)."
+        }
+    ],
+    "outputs": [
+        {
+            "type": "integer",
+            "description": "The index of the PAM sequence in the genome."
+        }
+    ],
+    "examples": [
+        {
+            "input": {
+                "organism_name": "Synechococcus elongatus UTEX 2973",
+                "gene_name": "nblA"
+            },
+            "output": {"result": 28}
+        },
+        {
+            "input": {
+                "organism_name": "E. coli Mach1",
+                "gene_name": "lacZ"
+            },
+            "output": {"result": 145}
+        }
+    ],
+    "execution_details": {
+        "language": "Python",
+        "source": "bio_functions.py",
+        "execution": "find_pam"
+    },
+    "notes": [
+        "This function dynamically determines the CRISPR system and PAM sequence based on the organism's toolkit.",
+        "The toolkit must include genome data, CRISPR systems, and PAM sequences.",
+        "For example, 'Synechococcus elongatus UTEX 2973' uses Cas12a with a PAM sequence of 'YTN', and 'E. coli Mach1' uses Cas9 with a PAM sequence of 'NGG'."
+    ]
+}

@@ -1,0 +1,52 @@
+{
+    "organisms": {
+        "Synechococcus elongatus UTEX 2973": {
+            "genome": {
+                "sequence": "data/genomes/synechococcus_elongatus_2973.fasta",
+                "is_circular": false
+            },
+            "genes": {
+                "nblA": {
+                    "start": 10,
+                    "end": 40,
+                    "strand": "+",
+                    "description": "Nonbleaching protein A (nblA) gene involved in photosystem degradation during nutrient stress."
+                }
+            },
+            "toolkit": {
+                "crispr_systems": [
+                    "Cas12a"
+                ],
+                "pam_sequence": "YTN",
+                "notes": "Cas12a PAM sequences are YTN, where Y is a pyrimidine (C or T), and N is any base."
+            }
+        },
+        "Synechococcus elongatus PCC 7942": {
+            "genome": {
+                "sequence": "GGCTTAGCTTGGGCGTCTGACTTGGGCTAGGCTTAGGTTGCGC",
+                "is_circular": true
+            },
+            "genes": {
+                "nblA": {
+                    "start": 15,
+                    "end": 45,
+                    "strand": "+",
+                    "description": "Nonbleaching protein A (nblA) gene involved in photosystem degradation during nutrient stress."
+                },
+                "glgC": {
+                    "start": 50,
+                    "end": 150,
+                    "strand": "-",
+                    "description": "Encodes ADP-glucose pyrophosphorylase, a key enzyme in glycogen biosynthesis."
+                }
+            },
+            "toolkit": {
+                "crispr_systems": [
+                    "Cas9"
+                ],
+                "pam_sequence": "NGG",
+                "notes": "Cas9 PAM sequences are NGG, where N is any base."
+            }
+        }
+    }
+}

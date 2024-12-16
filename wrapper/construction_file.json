@@ -1,0 +1,56 @@
+{
+    "construction_file": {
+      "name": "{{experiment_name}}",  
+      "steps": [
+        {
+          "step_type": "PCR",
+          "inputs": {
+            "forward_oligo": "{{forward_oligo}}",
+            "reverse_oligo": "{{reverse_oligo}}",
+            "template": "{{template_dna}}"
+          },
+          "outputs": {
+            "product": "{{pcr_output}}"
+          }
+        },
+        {
+          "step_type": "Digest",
+          "inputs": {
+            "dna": "{{input_dna}}",
+            "enzymes": ["{{restriction_enzyme}}"]
+          },
+          "outputs": {
+            "selected_fragment": "{{fragment_selection}}",
+            "product": "{{digest_output}}"
+          }
+        },
+        {
+          "step_type": "Ligate",
+          "inputs": {
+            "dnas": ["{{input_dnas}}"]
+          },
+          "outputs": {
+            "product": "{{ligation_output}}"
+          }
+        },
+        {
+          "step_type": "Transform",
+          "inputs": {
+            "dna": "{{input_dna}}",
+            "strain": "{{strain_name}}",
+            "antibiotics": ["{{antibiotic}}"]
+          },
+          "outputs": {
+            "product": "{{final_construct}}"
+          }
+        }
+      ],
+      "metadata": {
+        "organism": "{{organism_name}}",
+        "antibiotics_used": ["{{antibiotic}}"],
+        "enzymes_used": ["{{enzyme_list}}"],
+        "notes": "{{additional_notes}}"
+      }
+    }
+  }
+  
