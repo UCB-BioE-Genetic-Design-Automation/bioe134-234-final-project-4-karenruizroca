@@ -7,8 +7,8 @@
             },
             "genes": {
                 "nblA": {
-                    "start": 10,
-                    "end": 40,
+                    "start": 80,
+                    "end": 110,
                     "strand": "+",
                     "description": "Nonbleaching protein A (nblA) gene involved in photosystem degradation during nutrient stress."
                 }

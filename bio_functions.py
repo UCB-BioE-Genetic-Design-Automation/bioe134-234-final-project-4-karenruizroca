@@ -7,11 +7,8 @@ import json
 # ===========================
 #  GLOBAL VARIABLES
 # ===========================
-# Global constant for the organism's data file which includes their genome sequence 
-GENOME_DATA_FILE = "wrapper/organism_data.json"  # Relative path
-
-# Load genome data once
-with open(GENOME_DATA_FILE, "r") as file:
+# Load the organism data JSON file
+with open("wrapper/organism_data.json", "r") as file:
     GENOME_DATA = json.load(file)
 
 # ===========================
@@ -35,7 +32,9 @@ def get_genome_sequence(organism_name):
         raise ValueError(f"Organism '{organism_name}' not found in JSON.")
 
     # Get the FASTA file path
-    fasta_file = organism["genome"].get("file")
+    fasta_file = organism["genome"].get("sequence")
+    print(f"DEBUG: FASTA file path retrieved: {fasta_file}")  # Add this line
+
     if not fasta_file:
         raise ValueError(f"FASTA file path not found for '{organism_name}'.")
 
@@ -127,7 +126,7 @@ def find_pam(organism_name, gene_name):
     genome_sequence = get_genome_sequence(organism_name)
     
     # Retrieve organism and gene data
-    organism = json_data["organisms"].get(organism_name)
+    organism = GENOME_DATA["organisms"].get(organism_name)
     gene = organism["genes"].get(gene_name)
     if not gene:
         raise ValueError(f"Gene '{gene_name}' not found in '{organism_name}'.")
@@ -145,13 +144,16 @@ def find_pam(organism_name, gene_name):
 
     # Search for the PAM sequence
     pam_sequence = organism["toolkit"].get("pam_sequence")
+    print(f"DEBUG: Searching for PAM '{pam_sequence}' in target region...")
     for i in range(len(target_region) - len(pam_sequence) + 1):
         if all(
             base == ref or ref == "N" or (ref == "Y" and base in "CT")
             for base, ref in zip(target_region[i:i + len(pam_sequence)], pam_sequence)
         ):
+            print(f"DEBUG: PAM found at index {i}")
             return max(0, start - flanking_bp + i)
 
+    print("DEBUG: No valid PAM sequence found.")
     raise ValueError(f"No PAM sequence {pam_sequence} found near '{gene_name}' in '{organism_name}'.")
 
 
