@@ -11,32 +11,48 @@ For CRISPR constructs, we first must secure two aims.
 
 These functions are implemented in **Python** and are part of the broader bioinformatics toolset aimed at automating genetic sequence analysis tasks.
 
-# Genome Data JSON Documentation
+## JSON Documentation
 
-## Organism Data JSON File 
+## organism_data.json
 This JSON file stores genome sequences and gene annotations for organisms. It also includes CRISPR toolkit details, such as supported systems and PAM sequences.
 
-## Key Design Decisions
-1. **Organisms Grouping**:
-   - Each organism is a key under the `organisms` object.
-   - This structure allows easy addition of new organisms.
+   ## Key Design Decisions
+   1. **Organisms Grouping**:
+      - Each organism is a key under the `organisms` object.
+      - This structure allows easy addition of new organisms.
 
-2. **Genome Data**:
-   - The `genome` object contains the sequence and a flag (`is_circular`) to indicate whether the genome is circular.
+   2. **Genome Data**:
+      - The `genome` object contains the sequence and a flag (`is_circular`) to indicate whether the genome is circular.
 
-3. **Gene Annotations**:
-   - Gene details include `start`, `end`, `strand`, and a `description`.
-   - A `_notes` field is added for additional gene-specific comments.
+   3. **Gene Annotations**:
+      - Gene details include `start`, `end`, `strand`, and a `description`.
+      - A `_notes` field is added for additional gene-specific comments.
 
-4. **CRISPR Toolkit**:
-   - Each organism includes a `toolkit` with supported CRISPR systems and their associated PAM sequences.
-   - `notes` in the toolkit clarify details about the PAM sequence.
-
-
+   4. **CRISPR Toolkit**:
+      - Each organism includes a `toolkit` with supported CRISPR systems and their associated PAM sequences.
+      - `notes` in the toolkit clarify details about the PAM sequence.
 
 
+## construction_file_format.json
+This JSON file serves as a template for generating gene knockout construction files. It defines the structure of experiments, specifying the steps required for CRISPR-based genetic modifications, such as PCR, digestion, ligation, and transformation.
 
+   ## Key Design Decisions
+   1. **Modular Experiment Steps**:
+      - The file organizes construction steps (PCR, Digest, Ligate, and Transform) as a list within the steps array.
+      - Each step includes inputs and outputs, making it flexible for various CRISPR workflows.
 
+   2. **Dynamic Placeholders**:
+      - Placeholders like {forward_oligo}, {template_dna}, and {final_construct} are used to ensure the file can be dynamically populated with experiment-specific data.
+      - This design separates the static experiment structure from the dynamic content, increasing reusability.
+
+## Wrappers for LLM-based workflows 
+These will help communicate the goal and intent of a function to an LLM by providing additional context, input/output details, and metadata. This ensures the LLM understands the function's purpose and generates accurate, aligned outputs. I have included wrappers for:
+   1. design_grna function
+   2. find_pam function
+   3. generate_construction_file function 
+
+As well as prompts the LLM could interpret and the function calls appropriate for the user request in 
+   - prompts.json
 
 
 ## Relevant Articles  
