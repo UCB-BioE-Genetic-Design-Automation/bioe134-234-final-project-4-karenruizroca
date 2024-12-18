@@ -2,18 +2,117 @@
 #  IMPORTS
 # ===========================
 from Bio import SeqIO
+import os
 import json
+from copy import deepcopy
+
 
 # ===========================
 #  GLOBAL VARIABLES
 # ===========================
-# Load the organism data JSON file
+# Load the organisms' data JSON file
 with open("wrapper/organism_data.json", "r") as file:
     GENOME_DATA = json.load(file)
 
 # ===========================
 #  HELPER FUNCTIONS
 # ===========================
+
+def generate_construction_file(organism_name, gene_name):
+    """
+    Generates and prints a CRISPR gene knockout construction file.
+
+    Args:
+        organism_name (str): Name of the organism.
+        gene_name (str): Target gene name.
+
+    Returns:
+        dict: A populated construction file instance.
+    """
+    # Verify the template file exists
+    template_path = "wrapper/construction_file_format.json"
+    if not os.path.exists(template_path):
+        raise FileNotFoundError(f"Template file '{template_path}' not found.")
+
+    # Retrieve organism toolkit and gene details
+    organism = GENOME_DATA["organisms"].get(organism_name)
+    if not organism:
+        raise ValueError(f"Organism '{organism_name}' not found.")
+
+    gene = organism["genes"].get(gene_name)
+    if not gene:
+        raise ValueError(f"Gene '{gene_name}' not found in '{organism_name}'.")
+
+    toolkit = organism["toolkit"]
+    crispr_system = toolkit["crispr_systems"][0]
+
+    # Generate forward and reverse oligos dynamically
+    forward_oligo = design_grna(organism_name, gene_name)
+    reverse_oligo = reverse_complement(forward_oligo)
+
+    # Read the template JSON file
+    with open(template_path, "r") as template_file:
+        template = json.load(template_file)
+
+    # Prepare dynamic values for placeholders
+    placeholders = {
+        "experiment_name": f"{gene_name}_knockout_{organism_name.replace(' ', '_')}",
+        "forward_oligo": forward_oligo,
+        "reverse_oligo": reverse_oligo,
+        "template_dna": f"genomic_DNA_{organism_name}",
+        "pcr_output": f"PCR_product_{gene_name}",
+        "input_dna": f"PCR_product_{gene_name}",
+        "restriction_enzyme": f"{crispr_system}_restriction_enzyme",
+        "fragment_selection": f"selected_fragment_{gene_name}",
+        "digest_output": f"Digested_{gene_name}",
+        "input_dnas": [f"Digested_{gene_name}", "Vector_backbone"],  # List instead of string
+        "ligation_output": f"Ligation_product_{gene_name}",
+        "strain_name": organism_name,
+        "antibiotic": "Spec",  # Example antibiotic
+        "final_construct": f"Final_construct_{gene_name}",
+        "enzyme_list": [f"{crispr_system}_restriction_enzyme"],  # List for enzymes
+        "additional_notes": f"Knockout construct for {gene_name}"
+    }
+    # Replace placeholders in the JSON template
+    def replace_placeholders(obj, placeholders):
+        if isinstance(obj, dict):
+            return {k: replace_placeholders(v, placeholders) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [replace_placeholders(item, placeholders) for item in obj]
+        elif isinstance(obj, str):
+            try:
+                return obj.format(**placeholders)
+            except KeyError as e:
+                raise KeyError(f"Missing placeholder key: {e}")  # Debug missing placeholders
+        return obj
+
+
+    populated_file = replace_placeholders(template, placeholders)
+    print("DEBUG: Fully populated construction file:", json.dumps(populated_file, indent=4))
+
+
+    # DEBUG: Print the dynamically populated steps for inspection
+    print("DEBUG: Populated Construction File:", json.dumps(populated_file, indent=4))
+
+    # Print the steps in a user-friendly format
+    print("\nGenerated Construction Steps:")
+    for step in populated_file["construction_file"]["steps"]:
+        step_type = step["step_type"].lower()
+        inputs = step["inputs"]
+        outputs = step["outputs"]
+
+        if step_type == "pcr":
+            print(f"pcr {inputs['forward_oligo']} {inputs['reverse_oligo']} {inputs['template']} {outputs['product']}")
+        elif step_type == "digest":
+            print(f"digest {inputs['dna']} {inputs['enzymes'][0]} 1 {outputs['product']}")
+        elif step_type == "ligate":
+            print(f"ligate {inputs['dnas']} {outputs['product']}")
+        elif step_type == "transform":
+            print(f"transform {inputs['dna']} {inputs['strain']} {inputs['antibiotics'][0]} {outputs['product']}")
+
+    return populated_file
+
+
 
 def get_genome_sequence(organism_name):
     """
@@ -60,11 +159,9 @@ def get_toolkit_for_organism(organism_name):
     """
     Retrieve the genetic engineering toolkit available for the specified organism.
     
-    Args:
-        organism_name (str): The name of the organism.
+    Args: organism_name (str): The name of the organism.
         
-    Returns:
-        dict: A dictionary containing the toolkit details for the organism, including CRISPR systems and PAM sequences.
+    Returns: dict: A dictionary containing the toolkit details for the organism, including CRISPR systems and PAM sequences.
     """
     # Retrieve the organism's data
     organism = GENOME_DATA["organisms"].get(organism_name)

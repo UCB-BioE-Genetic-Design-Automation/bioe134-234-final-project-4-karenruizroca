@@ -1,76 +1,114 @@
 {
   "prompts": [
     {
-      "request": "What would you get if you flipped and complemented 'ATGC'?",
+      "request": "I want to perform nblA gene knockout in Synechococcus elongatus UTEX 2973.",
       "expected_call": {
-        "function_id": "org.c9.function.bioe_134.reverse_complement",
+        "function_id": "org.c9.function.bioe_134.generate_construction_file",
         "arguments": {
-          "sequence": "ATGC"
+          "organism_name": "Synechococcus elongatus UTEX 2973",
+          "gene_name": "nblA"
         }
       },
       "expected_response": {
-        "sequence": "GCAT"
+        "construction_steps": "pcr Forward_oligo_for_nblA Reverse_oligo_for_nblA genomic_DNA_Synechococcus elongatus UTEX 2973 PCR_product_nblA\ndigest PCR_product_nblA Cas12a_restriction_enzyme 1 Digested_nblA\nligate Digested_nblA Ligation_product_nblA\ntransform Ligation_product_nblA Synechococcus elongatus UTEX 2973 Spec Final_construct_nblA"
       }
     },
     {
-      "request": "Turn 'ATGGCC' into amino acids.",
+      "request": "How would I do a Dpp gene knockout experiment in Drosophila melanogaster?",
       "expected_call": {
-        "function_id": "org.c9.function.bioe_134.translate",
+        "function_id": "org.c9.function.bioe_134.generate_construction_file",
         "arguments": {
-          "sequence": "ATGGCC"
+          "organism_name": "Drosophila melanogaster",
+          "gene_name": "Dpp"
         }
       },
       "expected_response": {
-        "sequence": "MA"
+        "construction_steps": "pcr Forward_oligo_for_Dpp Reverse_oligo_for_Dpp genomic_DNA_Drosophila melanogaster PCR_product_Dpp\ndigest PCR_product_Dpp Cas9_restriction_enzyme 1 Digested_Dpp\nligate Digested_Dpp Ligation_product_Dpp\ntransform Ligation_product_Dpp Drosophila melanogaster Spec Final_construct_Dpp"
       }
     },
     {
-      "request": "Flip and complement 'GCTAGC' for me.",
+      "request": "Can you find the PAM sequence near the psbA gene in Synechococcus elongatus PCC 7942?",
       "expected_call": {
-        "function_id": "org.c9.function.bioe_134.reverse_complement",
+        "function_id": "org.c9.function.bioe_134.find_pam",
         "arguments": {
-          "sequence": "GCTAGC"
+          "organism_name": "Synechococcus elongatus PCC 7942",
+          "gene_name": "psbA"
         }
       },
       "expected_response": {
-        "sequence": "GCTAGC"
-      }
-    },
-    {
-      "request": "Convert 'GGTACC' to its corresponding amino acids.",
-      "expected_call": {
-        "function_id": "org.c9.function.bioe_134.translate",
-        "arguments": {
-          "sequence": "GGTACC"
-        }
-      },
-      "expected_response": {
-        "sequence": "GP"
-      }
-    },
-    {
-      "request": "What’s the reverse of 'TTAGGCTA' with complements?",
-      "expected_call": {
-        "function_id": "org.c9.function.bioe_134.reverse_complement",
-        "arguments": {
-          "sequence": "TTAGGCTA"
-        }
-      },
-      "expected_response": {
-        "sequence": "TAGCCTAA"
-      }
-    },
-    {
-      "request": "Can you turn 'ATGCGTGA' into a protein sequence?",
-      "expected_call": {
-        "function_id": "org.c9.function.bioe_134.translate",
-        "arguments": {
-          "sequence": "ATGCGTGA"
-        }
-      },
-      "expected_response": {
-        "sequence": "MR"
+        "pam_index": 105
       }
     }
+    ,
+    {
+      "request": "Design a gRNA sequence for the glgC gene in Synechocystis sp. PCC 6803.",
+      "expected_call": {
+        "function_id": "org.c9.function.bioe_134.design_grna",
+        "arguments": {
+          "organism_name": "Synechocystis sp. PCC 6803",
+          "gene_name": "glgC"
+        }
+      },
+      "expected_response": {
+        "gRNA_sequence": "TGCCTAGGCTTAGGCCCTGA"
+      }
+    }
+    ,
+    {
+      "request": "Find the PAM sequence near the nblA gene in Synechococcus elongatus UTEX 2973.",
+      "expected_call": {
+        "function_id": "org.c9.function.bioe_134.find_pam",
+        "arguments": {
+          "organism_name": "Synechococcus elongatus UTEX 2973",
+          "gene_name": "nblA"
+        }
+      },
+      "expected_response": {
+        "pam_index": 50
+      }
+    }
+    ,
+    {
+      "request": "Locate the PAM sequence near the cpcA gene in Synechocystis sp. PCC 6803.",
+      "expected_call": {
+        "function_id": "org.c9.function.bioe_134.find_pam",
+        "arguments": {
+          "organism_name": "Synechocystis sp. PCC 6803",
+          "gene_name": "cpcA"
+        }
+      },
+      "expected_response": {
+        "pam_index": 120
+      }
+    }
+    ,
+    {
+      "request": "Design a gRNA for the psbD gene in Synechococcus elongatus PCC 7942.",
+      "expected_call": {
+        "function_id": "org.c9.function.bioe_134.design_grna",
+        "arguments": {
+          "organism_name": "Synechococcus elongatus PCC 7942",
+          "gene_name": "psbD"
+        }
+      },
+      "expected_response": {
+        "gRNA_sequence": "CCTGGTAGCTAGCTGGTAGT"
+      }
+    }
+    ,
+    {
+      "request": "Generate a gRNA sequence for the glgA gene in Synechococcus elongatus UTEX 2973.",
+      "expected_call": {
+        "function_id": "org.c9.function.bioe_134.design_grna",
+        "arguments": {
+          "organism_name": "Synechococcus elongatus UTEX 2973",
+          "gene_name": "glgA"
+        }
+      },
+      "expected_response": {
+        "gRNA_sequence": "TAGGCTGATGCCCGATGCAA"
+      }
+    }
+    
   ]
 }
